@@ -19,28 +19,28 @@ func NewEpsilonGreedy(history structs.History, epsilon float64) (Strategy, error
 	return &EpsilonGreedy{history, epsilon}, nil
 }
 
-func (e *EpsilonGreedy) ChooseArm(arms []structs.Arm) structs.Arm {
+func (e *EpsilonGreedy) ChooseArm(arms []*structs.Arm) *structs.Arm {
 	if rand.Float64() > e.epsilon {
 		return e.chooseBestArm(arms)
 	}
 	return e.chooseRandomArm(arms)
 }
 
-func (e *EpsilonGreedy) chooseBestArm(arms []structs.Arm) structs.Arm {
-	var bestArm structs.Arm
+func (e *EpsilonGreedy) chooseBestArm(arms []*structs.Arm) *structs.Arm {
+	var bestArm *structs.Arm
 	var bestArmValue float64 = 0.0
 
 	for _, arm := range arms {
 		armStats := e.history.ArmToStats[arm]
-		if armStats.Value < bestArmValue {
+		if armStats.RunningAvgReward < bestArmValue {
 			continue
 		}
 		bestArm = arm
-		bestArmValue = armStats.Value
+		bestArmValue = armStats.RunningAvgReward
 	}
 	return bestArm
 }
 
-func (e *EpsilonGreedy) chooseRandomArm(arms []structs.Arm) structs.Arm {
+func (e *EpsilonGreedy) chooseRandomArm(arms []*structs.Arm) *structs.Arm {
 	return arms[rand.Intn(len(arms))]
 }

@@ -1,14 +1,18 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/leoffx/a-sleeping-recovering-bandit-algorithm-for-optimizing-recurring-notifications/strategies"
 	"github.com/leoffx/a-sleeping-recovering-bandit-algorithm-for-optimizing-recurring-notifications/structs"
 )
 
 const numRounds = 1000
+const numArms = 10
 
 func main() {
-	history := structs.History{}
+	history := structs.History{ArmToStats: make(map[*structs.Arm]structs.Stats)}
+	allArms := structs.InitializeArms(numArms)
 
 	epsilon := 0.1
 	strategy, err := strategies.NewEpsilonGreedy(history, epsilon)
@@ -17,13 +21,12 @@ func main() {
 		panic(err)
 	}
 
-	bandit := structs.Bandit{}
-
 	for i := 0; i < numRounds; i++ {
-		arms := bandit.GetEligibleArms()
-		arm := strategy.ChooseArm(arms)
-		reward := arm.Draw()
-
+		eligibleArms := structs.GetEligibleArms(allArms)
+		arm := strategy.ChooseArm(eligibleArms)
+		reward := arm.DrawReward()
+		history.Update(arm, reward)
 	}
 
+	fmt.Println("History: ", history)
 }

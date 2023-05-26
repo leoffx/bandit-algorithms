@@ -10,5 +10,5 @@ const (
 )
 
 type Strategy interface {
-	ChooseArm([]structs.Arm) structs.Arm
+	ChooseArm([]*structs.Arm) *structs.Arm
 }
