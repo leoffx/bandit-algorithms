@@ -11,12 +11,11 @@ const numRounds = 1000
 const numArms = 10
 
 func main() {
-	history := structs.History{ArmToStats: make(map[*structs.Arm]structs.Stats)}
 	allArms := structs.InitializeArms(numArms)
+	history := structs.NewHistory(allArms)
 
 	epsilon := 0.1
 	strategy, err := strategies.NewEpsilonGreedy(history, epsilon)
-
 	if err != nil {
 		panic(err)
 	}

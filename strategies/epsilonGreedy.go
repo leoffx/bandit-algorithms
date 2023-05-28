@@ -12,11 +12,11 @@ type EpsilonGreedy struct {
 	epsilon float64
 }
 
-func NewEpsilonGreedy(history structs.History, epsilon float64) (Strategy, error) {
+func NewEpsilonGreedy(history *structs.History, epsilon float64) (Strategy, error) {
 	if epsilon < 0.0 || epsilon > 1.0 {
-		return &EpsilonGreedy{}, errors.New("epsilon must be between 0.0 and 1.0")
+		return nil, errors.New("epsilon must be between 0.0 and 1.0")
 	}
-	return &EpsilonGreedy{history, epsilon}, nil
+	return &EpsilonGreedy{*history, epsilon}, nil
 }
 
 func (e *EpsilonGreedy) ChooseArm(arms []*structs.Arm) *structs.Arm {
@@ -28,7 +28,7 @@ func (e *EpsilonGreedy) ChooseArm(arms []*structs.Arm) *structs.Arm {
 
 func (e *EpsilonGreedy) chooseBestArm(arms []*structs.Arm) *structs.Arm {
 	var bestArm *structs.Arm
-	var bestArmValue float64 = 0.0
+	bestArmValue := 0.0
 
 	for _, arm := range arms {
 		armStats := e.history.ArmToStats[arm]
