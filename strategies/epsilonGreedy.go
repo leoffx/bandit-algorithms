@@ -32,11 +32,11 @@ func (e *EpsilonGreedy) chooseBestArm(arms []*structs.Arm) *structs.Arm {
 
 	for _, arm := range arms {
 		armStats := e.history.ArmToStats[arm]
-		if armStats.RunningAvgReward < bestArmValue {
+		if armStats.AvgRewardWhenUsed < bestArmValue {
 			continue
 		}
 		bestArm = arm
-		bestArmValue = armStats.RunningAvgReward
+		bestArmValue = armStats.AvgRewardWhenUsed
 	}
 	return bestArm
 }
