@@ -10,5 +10,6 @@ const (
 )
 
 type Strategy interface {
-	ChooseArm([]*structs.Arm) *structs.Arm
+	ChooseArm(map[*structs.Arm]float64) *structs.Arm
+	CalculateArmsProbabilities([]*structs.Arm) map[*structs.Arm]float64
 }

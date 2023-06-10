@@ -22,9 +22,10 @@ func main() {
 
 	for i := 0; i < numRounds; i++ {
 		eligibleArms := structs.GetEligibleArms(allArms)
-		arm := strategy.ChooseArm(eligibleArms)
-		reward := arm.DrawReward()
-		history.Update(arm, reward)
+		armToProbability := strategy.CalculateArmsProbabilities(eligibleArms)
+		chosenArm := strategy.ChooseArm(armToProbability)
+		reward := chosenArm.DrawReward()
+		history.Update(chosenArm, armToProbability, reward)
 	}
 
 	fmt.Println("History: ", history)
