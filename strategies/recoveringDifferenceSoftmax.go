@@ -9,11 +9,11 @@ import (
 )
 
 type RecoveringDifferenceSoftmax struct {
-	history     structs.History
+	history     *structs.History
 	temperature float64
 }
 
-func NewRecoveringDifferenceSoftmax(history structs.History, temperature float64) (*RecoveringDifferenceSoftmax, error) {
+func NewRecoveringDifferenceSoftmax(history *structs.History, temperature float64) (*RecoveringDifferenceSoftmax, error) {
 	if temperature <= 0 {
 		return nil, errors.New("temperature must be positive")
 	}
@@ -47,6 +47,10 @@ func (r *RecoveringDifferenceSoftmax) calculateScores(arms []*structs.Arm) []flo
 	scores := make([]float64, len(arms))
 	for i, arm := range arms {
 		armStats := r.history.ArmToStats[arm]
+		if armStats.Count == 0 {
+			scores[i] = 0
+			continue
+		}
 		scores[i] = (armStats.AvgRewardWhenUsed - armStats.AvgRewardWhenEligible) / armStats.AvgRewardWhenEligible
 	}
 	return scores

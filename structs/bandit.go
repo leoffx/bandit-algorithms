@@ -32,5 +32,6 @@ func InitializeArms(numArms int) []*Arm {
 }
 
 func GetEligibleArms(arms []*Arm) []*Arm {
+	// TODO: Implement
 	return arms
 }

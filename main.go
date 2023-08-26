@@ -15,7 +15,7 @@ func main() {
 	history := structs.NewHistory(allArms)
 
 	epsilon := 0.1
-	strategy, err := strategies.NewEpsilonGreedy(history, epsilon)
+	strategy, err := strategies.NewRecoveringDifferenceSoftmax(history, epsilon)
 	if err != nil {
 		panic(err)
 	}

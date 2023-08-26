@@ -40,6 +40,7 @@ func NewHistory(arms []*Arm) *History {
 }
 
 func (h *History) Update(chosenArm *Arm, armToProbability map[*Arm]float64, reward float64) {
+	// Order is important here
 	h.updateRounds(chosenArm, armToProbability, reward)
 	h.updateAvgRewards(armToProbability, reward)
 	h.UpdateMovingAvg(chosenArm, reward)
@@ -59,6 +60,7 @@ func (h *History) updateRounds(chosenArm *Arm, armToProbability map[*Arm]float64
 
 func (h *History) UpdateMovingAvg(chosenArm *Arm, reward float64) {
 	armStats := h.ArmToStats[chosenArm]
+	armStats.Count++
 	count := float64(armStats.Count)
 	armStats.MovingAvg = ((count-1.0)/count)*armStats.MovingAvg + (1.0/count)*reward
 }
@@ -81,10 +83,10 @@ func (h *History) calculateAvgRewards(rounds []*Round) (float64, float64) {
 		if round.WasChosen {
 			weightedProbSumWhenUsed += round.Probability * round.Reward
 			probSumWhenUsed += round.Probability
-		} else {
-			weightedProbSumWhenEligible += round.Probability * round.Reward
-			probSumWhenEligible += round.Probability
 		}
+		weightedProbSumWhenEligible += round.Probability * round.Reward
+		probSumWhenEligible += round.Probability
+
 	}
 	return weightedProbSumWhenUsed / probSumWhenUsed, weightedProbSumWhenEligible / probSumWhenEligible
 }
