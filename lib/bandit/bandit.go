@@ -32,6 +32,14 @@ func (b Bandit) PullArm(a *Arm) float64 {
 	return rand.NormFloat64()*a.stdDev + a.mean
 }
 
+func (b Bandit) String() string {
+	arms := ""
+	for _, a := range b.Arms {
+		arms += a.String() + "\n"
+	}
+	return arms
+}
+
 func (a Arm) String() string {
 	return "Arm{mean: " + strconv.FormatFloat(a.mean, 'f', -1, 64) + ", stdDev: " + strconv.FormatFloat(a.stdDev, 'f', -1, 64) + "}"
 }

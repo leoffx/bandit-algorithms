@@ -1,6 +1,8 @@
 package database
 
 import (
+	"fmt"
+
 	"github.com/leoffx/bandit-algorithms/lib/bandit"
 )
 
@@ -30,4 +32,16 @@ func NewEntry(round int, chosenArm *bandit.Arm, eligibleArms []*bandit.Arm, rewa
 
 func (d *Database) Insert(e *Entry) {
 	d.Entries = append(d.Entries, e)
+}
+
+func (d *Database) String() string {
+	entries := ""
+	for _, e := range d.Entries {
+		entries += e.String() + "\n"
+	}
+	return entries
+}
+
+func (e *Entry) String() string {
+	return fmt.Sprintf("Round: %d ChosenArm: %s Reward: %g", e.Round, e.ChosenArm, e.Reward)
 }

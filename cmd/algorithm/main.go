@@ -8,18 +8,14 @@ import (
 	"github.com/leoffx/bandit-algorithms/lib/strategy"
 )
 
-const numRounds = 1000
-const numArms = 10
+const numRounds = 100
+const numArms = 3
 
 func main() {
 	bandit := bandit.NewBandit(numArms)
 	db := database.NewDatabase()
 
-	epsilon := 0.1
-	strategy, err := strategy.NewRecoveringDifferenceSoftmax(db, epsilon)
-	if err != nil {
-		panic(err)
-	}
+	strategy := strategy.NewEpsilonGreedy(0.3)
 
 	for i := 0; i < numRounds; i++ {
 		eligibleArms := bandit.GetEligibleArms()
@@ -28,5 +24,6 @@ func main() {
 		db.Insert(database.NewEntry(i, chosenArm, eligibleArms, reward))
 	}
 
-	fmt.Println("Database: ", db)
+	fmt.Println("Database:\n", db)
+	fmt.Println("Bandit:\n", bandit)
 }
