@@ -5,9 +5,10 @@ import (
 )
 
 type Entry struct {
-	Round     int
-	ChosenArm *bandit.Arm
-	Reward    float64
+	Round        int
+	ChosenArm    *bandit.Arm
+	EligibleArms []*bandit.Arm
+	Reward       float64
 }
 
 type Database struct {

@@ -21,6 +21,13 @@ func NewBandit(numArms int) *Bandit {
 	}
 }
 
+func NewArm(mean float64, stdDev float64) *Arm {
+	return &Arm{
+		mean:   mean,
+		stdDev: stdDev,
+	}
+}
+
 func (b Bandit) PullArm(a *Arm) float64 {
 	return rand.NormFloat64()*a.stdDev + a.mean
 }
@@ -37,11 +44,7 @@ func (b Bandit) GetEligibleArms() []*Arm {
 func InitializeArms(numArms int) []*Arm {
 	arms := make([]*Arm, numArms)
 	for i := 0; i < numArms; i++ {
-		arm := &Arm{
-			mean:   rand.Float64(),
-			stdDev: rand.Float64(),
-		}
-		arms[i] = arm
+		arms[i] = NewArm(rand.Float64(), rand.Float64())
 	}
 	return arms
 }

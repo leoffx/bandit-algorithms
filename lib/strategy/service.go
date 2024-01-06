@@ -1,6 +1,9 @@
 package strategy
 
-import "github.com/leoffx/bandit-algorithms/lib/bandit"
+import (
+	"github.com/leoffx/bandit-algorithms/lib/bandit"
+	"github.com/leoffx/bandit-algorithms/lib/database"
+)
 
 const (
 	EpsilonGreedyStrategy               = iota
@@ -8,6 +11,5 @@ const (
 )
 
 type Strategy interface {
-	ChooseArm(map[*bandit.Arm]float64) *bandit.Arm
-	CalculateArmsProbabilities([]*bandit.Arm) map[*bandit.Arm]float64
+	ChooseArm([]*bandit.Arm, []*database.Entry) *bandit.Arm
 }
