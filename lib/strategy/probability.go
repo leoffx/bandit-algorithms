@@ -4,8 +4,6 @@ import (
 	"errors"
 	"math"
 	"math/rand"
-
-	"github.com/leoffx/bandit-algorithms/lib/bandit"
 )
 
 func Softmax(logits []float64, temperature float64) []float64 {
@@ -22,22 +20,22 @@ func Softmax(logits []float64, temperature float64) []float64 {
 	return probabilities
 }
 
-func RandomChoices(arms []*bandit.Arm, probabilities *[]float64) (*bandit.Arm, error) {
-	if len(arms) == 0 {
-		return nil, errors.New("no arms to choose from")
+func RandomChoices[T any](items []*T, probabilities *[]float64) (*T, error) {
+	if len(items) == 0 {
+		return nil, errors.New("no items to choose from")
 	}
 	if probabilities == nil || len(*probabilities) == 0 {
-		return arms[rand.Intn(len(arms))], nil
+		return items[rand.Intn(len(items))], nil
 	}
-	if len(*probabilities) != len(arms) {
-		return nil, errors.New("probabilities must be the same length as arms")
+	if len(*probabilities) != len(items) {
+		return nil, errors.New("probabilities must be the same length as items")
 	}
 	r := rand.Float64()
 	for i, probability := range *probabilities {
 		r -= probability
 		if r <= 0 {
-			return arms[i], nil
+			return items[i], nil
 		}
 	}
-	return arms[len(arms)-1], nil
+	return items[len(items)-1], nil
 }
