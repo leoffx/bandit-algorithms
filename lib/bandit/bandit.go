@@ -1,4 +1,4 @@
-package structs
+package bandit
 
 import (
 	"math/rand"

@@ -1,19 +1,20 @@
-package strategies
+package strategy
 
 import (
 	"errors"
 	"math"
 	"math/rand"
 
-	"github.com/leoffx/a-sleeping-recovering-bandit-algorithm-for-optimizing-recurring-notifications/structs"
+	"github.com/leoffx/bandit-algorithms/lib/bandit"
+	"github.com/leoffx/bandit-algorithms/lib/database"
 )
 
 type RecoveringDifferenceSoftmax struct {
-	history     *structs.History
+	history     *database.History
 	temperature float64
 }
 
-func NewRecoveringDifferenceSoftmax(history *structs.History, temperature float64) (*RecoveringDifferenceSoftmax, error) {
+func NewRecoveringDifferenceSoftmax(history *database.History, temperature float64) (*RecoveringDifferenceSoftmax, error) {
 	if temperature <= 0 {
 		return nil, errors.New("temperature must be positive")
 	}
@@ -23,18 +24,18 @@ func NewRecoveringDifferenceSoftmax(history *structs.History, temperature float6
 	}, nil
 }
 
-func (r *RecoveringDifferenceSoftmax) CalculateArmsProbabilities(arms []*structs.Arm) map[*structs.Arm]float64 {
+func (r *RecoveringDifferenceSoftmax) CalculateArmsProbabilities(arms []*bandit.Arm) map[*bandit.Arm]float64 {
 	scores := r.calculateScores(arms)
 	probabilities := softmax(scores, r.temperature)
-	armToProbability := make(map[*structs.Arm]float64)
+	armToProbability := make(map[*bandit.Arm]float64)
 	for i, arm := range arms {
 		armToProbability[arm] = probabilities[i]
 	}
 	return armToProbability
 }
 
-func (r *RecoveringDifferenceSoftmax) ChooseArm(armToProbability map[*structs.Arm]float64) *structs.Arm {
-	arms := make([]*structs.Arm, 0, len(armToProbability))
+func (r *RecoveringDifferenceSoftmax) ChooseArm(armToProbability map[*bandit.Arm]float64) *bandit.Arm {
+	arms := make([]*bandit.Arm, 0, len(armToProbability))
 	probabilities := make([]float64, 0, len(armToProbability))
 	for arm, probability := range armToProbability {
 		arms = append(arms, arm)
@@ -43,7 +44,7 @@ func (r *RecoveringDifferenceSoftmax) ChooseArm(armToProbability map[*structs.Ar
 	return randomChoices(arms, probabilities)
 }
 
-func (r *RecoveringDifferenceSoftmax) calculateScores(arms []*structs.Arm) []float64 {
+func (r *RecoveringDifferenceSoftmax) calculateScores(arms []*bandit.Arm) []float64 {
 	scores := make([]float64, len(arms))
 	for i, arm := range arms {
 		armStats := r.history.ArmToStats[arm]
@@ -70,7 +71,7 @@ func softmax(logits []float64, temperature float64) []float64 {
 	return probabilities
 }
 
-func randomChoices(arms []*structs.Arm, probabilities []float64) *structs.Arm {
+func randomChoices(arms []*bandit.Arm, probabilities []float64) *bandit.Arm {
 	r := rand.Float64()
 	for i, probability := range probabilities {
 		r -= probability

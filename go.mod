@@ -1,3 +1,3 @@
-module github.com/leoffx/a-sleeping-recovering-bandit-algorithm-for-optimizing-recurring-notifications
+module github.com/leoffx/bandit-algorithms
 
 go 1.20
