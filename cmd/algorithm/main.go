@@ -25,12 +25,7 @@ func main() {
 		eligibleArms := bandit.GetEligibleArms()
 		chosenArm := strategy.ChooseArm(eligibleArms, db.Entries)
 		reward := bandit.PullArm(chosenArm)
-		db.Insert(&database.Entry{
-			Round:        i,
-			ChosenArm:    chosenArm,
-			EligibleArms: eligibleArms,
-			Reward:       reward,
-		})
+		db.Insert(database.NewEntry(i, chosenArm, eligibleArms, reward))
 	}
 
 	fmt.Println("Database: ", db)

@@ -19,6 +19,15 @@ func NewDatabase() *Database {
 	return &Database{}
 }
 
+func NewEntry(round int, chosenArm *bandit.Arm, eligibleArms []*bandit.Arm, reward float64) *Entry {
+	return &Entry{
+		Round:        round,
+		ChosenArm:    chosenArm,
+		EligibleArms: eligibleArms,
+		Reward:       reward,
+	}
+}
+
 func (d *Database) Insert(e *Entry) {
 	d.Entries = append(d.Entries, e)
 }

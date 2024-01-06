@@ -26,7 +26,7 @@ func RandomChoices(arms []*bandit.Arm, probabilities *[]float64) (*bandit.Arm, e
 	if len(arms) == 0 {
 		return nil, errors.New("no arms to choose from")
 	}
-	if len(*probabilities) == 0 {
+	if probabilities == nil || len(*probabilities) == 0 {
 		return arms[rand.Intn(len(arms))], nil
 	}
 	if len(*probabilities) != len(arms) {
