@@ -10,11 +10,11 @@ import (
 )
 
 type RecoveringDifferenceSoftmax struct {
-	history     *database.History
+	history     *database.Database
 	temperature float64
 }
 
-func NewRecoveringDifferenceSoftmax(history *database.History, temperature float64) (*RecoveringDifferenceSoftmax, error) {
+func NewRecoveringDifferenceSoftmax(history *database.Database, temperature float64) (*RecoveringDifferenceSoftmax, error) {
 	if temperature <= 0 {
 		return nil, errors.New("temperature must be positive")
 	}
@@ -34,27 +34,29 @@ func (r *RecoveringDifferenceSoftmax) CalculateArmsProbabilities(arms []*bandit.
 	return armToProbability
 }
 
-func (r *RecoveringDifferenceSoftmax) ChooseArm(armToProbability map[*bandit.Arm]float64) *bandit.Arm {
-	arms := make([]*bandit.Arm, 0, len(armToProbability))
-	probabilities := make([]float64, 0, len(armToProbability))
-	for arm, probability := range armToProbability {
-		arms = append(arms, arm)
-		probabilities = append(probabilities, probability)
-	}
-	return randomChoices(arms, probabilities)
+func (r *RecoveringDifferenceSoftmax) ChooseArm(arms []*bandit.Arm, entries []*database.Entry) *bandit.Arm {
+	// arms := make([]*bandit.Arm, 0, len(armToProbability))
+	// probabilities := make([]float64, 0, len(armToProbability))
+	// for arm, probability := range armToProbability {
+	// 	arms = append(arms, arm)
+	// 	probabilities = append(probabilities, probability)
+	// }
+	// return randomChoices(arms, probabilities)
+	return nil
 }
 
 func (r *RecoveringDifferenceSoftmax) calculateScores(arms []*bandit.Arm) []float64 {
-	scores := make([]float64, len(arms))
-	for i, arm := range arms {
-		armStats := r.history.ArmToStats[arm]
-		if armStats.Count == 0 {
-			scores[i] = 0
-			continue
-		}
-		scores[i] = (armStats.AvgRewardWhenUsed - armStats.AvgRewardWhenEligible) / armStats.AvgRewardWhenEligible
-	}
-	return scores
+	// scores := make([]float64, len(arms))
+	// for i, arm := range arms {
+	// 	armStats := r.history.ArmToStats[arm]
+	// 	if armStats.Count == 0 {
+	// 		scores[i] = 0
+	// 		continue
+	// 	}
+	// 	scores[i] = (armStats.AvgRewardWhenUsed - armStats.AvgRewardWhenEligible) / armStats.AvgRewardWhenEligible
+	// }
+	// return scores
+	return nil
 }
 
 func softmax(logits []float64, temperature float64) []float64 {

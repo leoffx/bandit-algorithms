@@ -12,22 +12,25 @@ const numRounds = 1000
 const numArms = 10
 
 func main() {
-	allArms := bandit.InitializeArms(numArms)
-	history := database.NewHistory(allArms)
+	bandit := bandit.NewBandit(numArms)
+	db := database.NewDatabase()
 
 	epsilon := 0.1
-	strategy, err := strategy.NewRecoveringDifferenceSoftmax(history, epsilon)
+	strategy, err := strategy.NewRecoveringDifferenceSoftmax(db, epsilon)
 	if err != nil {
 		panic(err)
 	}
 
 	for i := 0; i < numRounds; i++ {
-		eligibleArms := bandit.GetEligibleArms(allArms)
-		armToProbability := strategy.CalculateArmsProbabilities(eligibleArms)
-		chosenArm := strategy.ChooseArm(armToProbability)
-		reward := chosenArm.DrawReward()
-		history.Update(chosenArm, armToProbability, reward)
+		eligibleArms := bandit.GetEligibleArms()
+		chosenArm := strategy.ChooseArm(eligibleArms, db.Entries)
+		reward := bandit.PullArm(chosenArm)
+		db.Insert(&database.Entry{
+			Round:     i,
+			ChosenArm: chosenArm,
+			Reward:    reward,
+		})
 	}
 
-	fmt.Println("History: ", history)
+	fmt.Println("Database: ", db)
 }
