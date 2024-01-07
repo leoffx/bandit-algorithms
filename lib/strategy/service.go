@@ -11,5 +11,5 @@ const (
 )
 
 type Strategy interface {
-	ChooseArm([]*bandit.Arm, []*database.Entry) *bandit.Arm
+	ChooseArm([]*bandit.Arm, *database.ArmToStats) *bandit.Arm
 }
