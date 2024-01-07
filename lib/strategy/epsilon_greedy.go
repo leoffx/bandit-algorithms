@@ -17,9 +17,9 @@ func NewEpsilonGreedy(epsilon float64) *EpsilonGreedy {
 	}
 }
 
-func (e *EpsilonGreedy) ChooseArm(arms []*bandit.Arm, entries []*database.Entry) *bandit.Arm {
+func (e *EpsilonGreedy) ChooseArm(arms []*bandit.Arm, armToStats *database.ArmToStats) *bandit.Arm {
 	// Explore
-	if rand.Float64() < e.epsilon || len(entries) == 0 {
+	if rand.Float64() < e.epsilon || len(*armToStats) == 0 {
 		arm, err := RandomChoices(arms, nil)
 		if err != nil {
 			panic(err)
@@ -27,38 +27,16 @@ func (e *EpsilonGreedy) ChooseArm(arms []*bandit.Arm, entries []*database.Entry)
 		return arm
 	}
 	// Exploit
-	return e.chooseBestArm(entries)
+	return e.chooseBestArm(armToStats)
 }
 
-type ArmStats struct {
-	Count     int
-	AvgReward *float64
-}
-
-func (e *EpsilonGreedy) chooseBestArm(entries []*database.Entry) *bandit.Arm {
-	armToReward := make(map[*bandit.Arm]*ArmStats)
+func (e *EpsilonGreedy) chooseBestArm(armToStats *database.ArmToStats) *bandit.Arm {
 	var bestArm *bandit.Arm
-	var bestAvgReward *float64
-	for _, entry := range entries {
-		curr, found := armToReward[entry.ChosenArm]
-		if !found {
-			curr = &ArmStats{
-				Count:     0,
-				AvgReward: nil,
-			}
-			armToReward[entry.ChosenArm] = curr
-		}
-		curr.Count++
-		if curr.AvgReward == nil {
-			avg := entry.Reward
-			curr.AvgReward = &avg
-		} else {
-			newAvg := *curr.AvgReward + (entry.Reward-*curr.AvgReward)/float64(curr.Count)
-			curr.AvgReward = &newAvg
-		}
-		if bestAvgReward == nil || *curr.AvgReward > *bestAvgReward {
-			bestArm = entry.ChosenArm
-			bestAvgReward = curr.AvgReward
+	var bestAvgReward float64
+	for arm, stats := range *armToStats {
+		if bestArm == nil || stats.AvgReward > bestAvgReward {
+			bestArm = arm
+			bestAvgReward = stats.AvgReward
 		}
 	}
 	return bestArm

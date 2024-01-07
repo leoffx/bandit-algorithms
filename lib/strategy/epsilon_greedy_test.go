@@ -16,25 +16,34 @@ func TestChooseArm(t *testing.T) {
 		bandit.NewArm(0, 0),
 		bandit.NewArm(10, 0),
 	}
-	entries := []*database.Entry{
-		database.NewEntry(1, arms[0], arms, 5),
-		database.NewEntry(2, arms[1], arms, 0),
-		database.NewEntry(3, arms[2], arms, 10),
+	armToStats := &database.ArmToStats{
+		arms[0]: &database.ArmStats{
+			Count:     1,
+			AvgReward: 5,
+		},
+		arms[1]: &database.ArmStats{
+			Count:     1,
+			AvgReward: 0,
+		},
+		arms[2]: &database.ArmStats{
+			Count:     1,
+			AvgReward: 10,
+		},
 	}
 
 	tests := []struct {
-		name     string
-		strategy *strategy.EpsilonGreedy
-		arms     []*bandit.Arm
-		entries  []*database.Entry
-		expected *bandit.Arm
+		name       string
+		strategy   *strategy.EpsilonGreedy
+		arms       []*bandit.Arm
+		armToStats *database.ArmToStats
+		expected   *bandit.Arm
 	}{
 		{
-			name:     "Choose best arm with clear winner",
-			strategy: strategy.NewEpsilonGreedy(0),
-			arms:     arms,
-			entries:  entries,
-			expected: arms[2],
+			name:       "Choose best arm with clear winner",
+			strategy:   strategy.NewEpsilonGreedy(0),
+			arms:       arms,
+			armToStats: armToStats,
+			expected:   arms[2],
 		},
 		{
 			name:     "Choose best arm with tie",
@@ -43,31 +52,37 @@ func TestChooseArm(t *testing.T) {
 				bandit.NewArm(10, 0),
 				bandit.NewArm(10, 0),
 			},
-			entries: []*database.Entry{
-				database.NewEntry(1, arms[0], arms, 10),
-				database.NewEntry(2, arms[1], arms, 10),
+			armToStats: &database.ArmToStats{
+				arms[0]: &database.ArmStats{
+					Count:     1,
+					AvgReward: 10,
+				},
+				arms[1]: &database.ArmStats{
+					Count:     1,
+					AvgReward: 10,
+				},
 			},
 			expected: arms[0],
 		},
 		{
-			name:     "Choose best arm with no entries",
-			strategy: strategy.NewEpsilonGreedy(0),
-			arms:     arms,
-			entries:  []*database.Entry{},
-			expected: arms[0],
+			name:       "Choose best arm with no entries",
+			strategy:   strategy.NewEpsilonGreedy(0),
+			arms:       arms,
+			armToStats: &database.ArmToStats{},
+			expected:   arms[0],
 		},
 		{
-			name:     "Choose random arm with epsilon 0.5",
-			strategy: strategy.NewEpsilonGreedy(0.5),
-			arms:     arms,
-			entries:  entries,
-			expected: arms[1],
+			name:       "Choose random arm with epsilon 0.5",
+			strategy:   strategy.NewEpsilonGreedy(0.5),
+			arms:       arms,
+			armToStats: armToStats,
+			expected:   arms[1],
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			arm := tt.strategy.ChooseArm(tt.arms, tt.entries)
+			arm := tt.strategy.ChooseArm(tt.arms, tt.armToStats)
 			if arm != tt.expected {
 				t.Errorf("Test '%s' failed: Expected %v, got %v", tt.name, tt.expected, arm)
 			}

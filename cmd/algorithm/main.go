@@ -13,13 +13,14 @@ const numArms = 3
 
 func main() {
 	bandit := bandit.NewBandit(numArms)
-	db := database.NewDatabase()
+	db := database.NewDatabaseAggregator()
 
 	strategy := strategy.NewEpsilonGreedy(0.3)
 
 	for i := 0; i < numRounds; i++ {
 		eligibleArms := bandit.GetEligibleArms()
-		chosenArm := strategy.ChooseArm(eligibleArms, db.Entries)
+		armToStats := db.ArmToStats()
+		chosenArm := strategy.ChooseArm(eligibleArms, &armToStats)
 		reward := bandit.PullArm(chosenArm)
 		db.Insert(database.NewEntry(i, chosenArm, eligibleArms, reward))
 	}
