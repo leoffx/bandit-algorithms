@@ -34,9 +34,9 @@ func (e *EpsilonGreedy) chooseBestArm(armToStats *database.ArmToStats) *bandit.A
 	var bestArm *bandit.Arm
 	var bestAvgReward float64
 	for arm, stats := range *armToStats {
-		if bestArm == nil || stats.AvgReward > bestAvgReward {
+		if bestArm == nil || stats.AvgRewardWhenUsed > bestAvgReward {
 			bestArm = arm
-			bestAvgReward = stats.AvgReward
+			bestAvgReward = stats.AvgRewardWhenUsed
 		}
 	}
 	return bestArm

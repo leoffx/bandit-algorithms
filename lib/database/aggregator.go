@@ -1,8 +1,6 @@
 package database
 
 import (
-	"math"
-
 	"github.com/leoffx/bandit-algorithms/lib/bandit"
 )
 
@@ -11,11 +9,19 @@ type DatabaseAggregator struct {
 }
 
 type ArmStats struct {
-	Count     int
-	AvgReward float64
+	count             int
+	AvgRewardWhenUsed float64
+	// avgRewardWhenElligible float64
 }
 
 type ArmToStats map[*bandit.Arm]*ArmStats
+
+func NewArmStats(count int, avgRewardWhenUsed float64) *ArmStats {
+	return &ArmStats{
+		count:             count,
+		AvgRewardWhenUsed: avgRewardWhenUsed,
+	}
+}
 
 func NewDatabaseAggregator() *DatabaseAggregator {
 	db := NewDatabase()
@@ -26,23 +32,27 @@ func NewDatabaseAggregator() *DatabaseAggregator {
 
 func (db *DatabaseAggregator) ArmToStats() ArmToStats {
 	armToStats := make(ArmToStats)
-	negInf := math.Inf(-1)
 	for _, entry := range db.Entries {
-		curr, found := armToStats[entry.ChosenArm]
-		if !found {
-			curr = &ArmStats{
-				Count:     0,
-				AvgReward: negInf,
-			}
+		curr := armToStats[entry.ChosenArm]
+
+		if curr == nil {
+			curr = &ArmStats{}
 			armToStats[entry.ChosenArm] = curr
 		}
-		curr.Count++
-		if curr.AvgReward == negInf {
-			curr.AvgReward = entry.Reward
-		} else {
-			newAvg := curr.AvgReward + (entry.Reward-curr.AvgReward)/float64(curr.Count)
-			curr.AvgReward = newAvg
-		}
+
+		curr.count++
+		curr.AvgRewardWhenUsed = curr.AvgRewardWhenUsed + (entry.Reward-curr.AvgRewardWhenUsed)/float64(curr.count)
+
+		// for _, arm := range entry.EligibleArms {
+		// 	curr := armToStats[arm]
+
+		// 	if curr == nil {
+		// 		curr = &ArmStats{}
+		// 		armToStats[arm] = curr
+		// 	}
+
+		// 	curr.avgRewardWhenElligible = curr.avgRewardWhenElligible + (entry.Reward-curr.avgRewardWhenElligible)/float64(curr.count)
+		// }
 	}
 	return armToStats
 }

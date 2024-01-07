@@ -17,18 +17,9 @@ func TestChooseArm(t *testing.T) {
 		bandit.NewArm(10, 0),
 	}
 	armToStats := &database.ArmToStats{
-		arms[0]: &database.ArmStats{
-			Count:     1,
-			AvgReward: 5,
-		},
-		arms[1]: &database.ArmStats{
-			Count:     1,
-			AvgReward: 0,
-		},
-		arms[2]: &database.ArmStats{
-			Count:     1,
-			AvgReward: 10,
-		},
+		arms[0]: database.NewArmStats(1, 5),
+		arms[1]: database.NewArmStats(1, 0),
+		arms[2]: database.NewArmStats(1, 10),
 	}
 
 	tests := []struct {
@@ -53,14 +44,8 @@ func TestChooseArm(t *testing.T) {
 				bandit.NewArm(10, 0),
 			},
 			armToStats: &database.ArmToStats{
-				arms[0]: &database.ArmStats{
-					Count:     1,
-					AvgReward: 10,
-				},
-				arms[1]: &database.ArmStats{
-					Count:     1,
-					AvgReward: 10,
-				},
+				arms[0]: database.NewArmStats(1, 10),
+				arms[1]: database.NewArmStats(1, 10),
 			},
 			expected: arms[0],
 		},
