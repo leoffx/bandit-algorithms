@@ -6,16 +6,13 @@ import (
 	"github.com/leoffx/bandit-algorithms/lib/bandit"
 )
 
-type ArmProbability struct {
-	Arm         *bandit.Arm
-	Probability float64
-}
+type ArmToScore map[*bandit.Arm]float64
 
 type Entry struct {
-	Round             int
-	ChosenArm         *bandit.Arm
-	ArmsProbabilities []*ArmProbability
-	Reward            float64
+	Round      int
+	ChosenArm  *bandit.Arm
+	ArmToScore *ArmToScore
+	Reward     float64
 }
 
 type Database struct {
@@ -26,12 +23,12 @@ func NewDatabase() *Database {
 	return &Database{}
 }
 
-func NewEntry(round int, chosenArm *bandit.Arm, armsProbabilities []*ArmProbability, reward float64) *Entry {
+func NewEntry(round int, chosenArm *bandit.Arm, armToScore *ArmToScore, reward float64) *Entry {
 	return &Entry{
-		Round:             round,
-		ChosenArm:         chosenArm,
-		ArmsProbabilities: armsProbabilities,
-		Reward:            reward,
+		Round:      round,
+		ChosenArm:  chosenArm,
+		ArmToScore: armToScore,
+		Reward:     reward,
 	}
 }
 

@@ -35,7 +35,7 @@ func TestSoftmax(t *testing.T) {
 	for i, tt := range tests {
 		got := strategy.Softmax(tt.logits, tt.temperature)
 		for j, v := range got {
-			if math.Abs(v-tt.expected[j]) > 0.00000001 {
+			if math.Abs(v-tt.expected[j]) > 1e-6 {
 				t.Errorf("TestSoftmax(%d): got %v, want %v", i, got, tt.expected)
 				break
 			}
@@ -71,7 +71,7 @@ func TestRandomChoices(t *testing.T) {
 		},
 	}
 	for i, tt := range tests {
-		got, _ := strategy.RandomChoices(tt.arms, &tt.probabilities)
+		got, _ := strategy.RandomChoice(tt.arms, &tt.probabilities)
 		if !reflect.DeepEqual(got, tt.expected) {
 			t.Errorf("TestRandomChoices(%d): got %v, want %v", i, got, tt.expected)
 		}

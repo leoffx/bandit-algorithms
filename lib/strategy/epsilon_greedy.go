@@ -17,17 +17,39 @@ func NewEpsilonGreedy(epsilon float64) *EpsilonGreedy {
 	}
 }
 
-func (e *EpsilonGreedy) ChooseArm(arms []*bandit.Arm, armToStats *database.ArmToStats) *bandit.Arm {
+func (e *EpsilonGreedy) ScoreArms(arms []*bandit.Arm, armToStats *database.ArmToStats) *database.ArmToScore {
+	armToScore := make(database.ArmToScore)
 	// Explore
 	if rand.Float64() < e.epsilon || len(*armToStats) == 0 {
-		arm, err := RandomChoices(arms, nil)
-		if err != nil {
-			panic(err)
+		for _, arm := range arms {
+			armToScore[arm] = 1 / float64(len(arms))
 		}
-		return arm
+		return &armToScore
 	}
 	// Exploit
-	return e.chooseBestArm(armToStats)
+	bestArm := e.chooseBestArm(armToStats)
+	for _, arm := range arms {
+		if arm == bestArm {
+			armToScore[arm] = 1
+		} else {
+			armToScore[arm] = 0
+		}
+	}
+	return &armToScore
+}
+
+func (e *EpsilonGreedy) ChooseArm(armToScore *database.ArmToScore) *bandit.Arm {
+	ks := make([]*bandit.Arm, 0, len(*armToScore))
+	vs := make([]float64, 0, len(*armToScore))
+	for k, v := range *armToScore {
+		ks = append(ks, k)
+		vs = append(vs, v)
+	}
+	arm, err := RandomChoice(ks, &vs)
+	if err != nil {
+		panic(err)
+	}
+	return arm
 }
 
 func (e *EpsilonGreedy) chooseBestArm(armToStats *database.ArmToStats) *bandit.Arm {
