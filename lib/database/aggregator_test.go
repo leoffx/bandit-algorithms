@@ -2,6 +2,7 @@ package database_test
 
 import (
 	"fmt"
+	"math"
 	"testing"
 
 	"github.com/leoffx/bandit-algorithms/lib/bandit"
@@ -39,7 +40,7 @@ func TestArmToStats(t *testing.T) {
 	if arm0Stats.AvgRewardWhenElligible != 29./48. {
 		t.Error("arm0Stats.AvgRewardWhenElligible != 29./48.")
 	}
-	if arm1Stats.AvgRewardWhenElligible != 26./37. {
+	if math.Abs(arm1Stats.AvgRewardWhenElligible-26./37.) > 1e-6 {
 		t.Error("arm1Stats.AvgRewardWhenElligible != 26./37.")
 	}
 	if arm2Stats.AvgRewardWhenElligible != 1 {

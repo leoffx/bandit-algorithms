@@ -1,7 +1,7 @@
 package strategy
 
 import (
-	"github.com/leoffx/bandit-algorithms/lib/bandit"
+	"github.com/leoffx/bandit-algorithms/lib/arm"
 	"github.com/leoffx/bandit-algorithms/lib/database"
 )
 
@@ -11,5 +11,5 @@ const (
 )
 
 type Strategy interface {
-	ChooseArm([]*bandit.Arm, *database.ArmToStats) *bandit.Arm
+	ChooseArm([]*arm.Arm, *database.ArmToStats) *arm.Arm
 }

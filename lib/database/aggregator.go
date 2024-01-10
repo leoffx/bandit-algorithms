@@ -1,8 +1,6 @@
 package database
 
-import (
-	"github.com/leoffx/bandit-algorithms/lib/bandit"
-)
+import "github.com/leoffx/bandit-algorithms/lib/arm"
 
 type DatabaseAggregator struct {
 	*Database
@@ -15,7 +13,7 @@ type ArmStats struct {
 	sumScoresWhenElligible float64
 }
 
-type ArmToStats map[*bandit.Arm]*ArmStats
+type ArmToStats map[arm.Arm]*ArmStats
 
 func NewArmStats(count int, avgRewardWhenUsed float64) *ArmStats {
 	return &ArmStats{

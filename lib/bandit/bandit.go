@@ -1,35 +1,22 @@
 package bandit
 
 import (
-	"math/rand"
-	"strconv"
+	"github.com/leoffx/bandit-algorithms/lib/arm"
 )
 
 type Bandit struct {
-	Arms []*Arm
-}
-
-type Arm struct {
-	stdDev float64
-	mean   float64
+	Arms []arm.Arm
 }
 
 func NewBandit(numArms int) *Bandit {
-	arms := InitializeArms(numArms)
+	arms := arm.InitializeArms(numArms)
 	return &Bandit{
 		Arms: arms,
 	}
 }
 
-func NewArm(mean float64, stdDev float64) *Arm {
-	return &Arm{
-		mean:   mean,
-		stdDev: stdDev,
-	}
-}
-
-func (b Bandit) PullArm(a *Arm) float64 {
-	return rand.NormFloat64()*a.stdDev + a.mean
+func (b Bandit) PullArm(a arm.Arm) float64 {
+	return a.Pull()
 }
 
 func (b Bandit) String() string {
@@ -40,19 +27,7 @@ func (b Bandit) String() string {
 	return arms
 }
 
-func (a Arm) String() string {
-	return "Arm{mean: " + strconv.FormatFloat(a.mean, 'f', -1, 64) + ", stdDev: " + strconv.FormatFloat(a.stdDev, 'f', -1, 64) + "}"
-}
-
-func (b Bandit) GetEligibleArms() []*Arm {
+func (b Bandit) GetEligibleArms() []arm.Arm {
 	// TODO: Implement
 	return b.Arms
-}
-
-func InitializeArms(numArms int) []*Arm {
-	arms := make([]*Arm, numArms)
-	for i := 0; i < numArms; i++ {
-		arms[i] = NewArm(rand.Float64(), rand.Float64())
-	}
-	return arms
 }

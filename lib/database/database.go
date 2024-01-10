@@ -3,14 +3,14 @@ package database
 import (
 	"fmt"
 
-	"github.com/leoffx/bandit-algorithms/lib/bandit"
+	"github.com/leoffx/bandit-algorithms/lib/arm"
 )
 
-type ArmToScore map[*bandit.Arm]float64
+type ArmToScore map[arm.Arm]float64
 
 type Entry struct {
 	Round      int
-	ChosenArm  *bandit.Arm
+	ChosenArm  arm.Arm
 	ArmToScore *ArmToScore
 	Reward     float64
 }
@@ -23,7 +23,7 @@ func NewDatabase() *Database {
 	return &Database{}
 }
 
-func NewEntry(round int, chosenArm *bandit.Arm, armToScore *ArmToScore, reward float64) *Entry {
+func NewEntry(round int, chosenArm arm.Arm, armToScore *ArmToScore, reward float64) *Entry {
 	return &Entry{
 		Round:      round,
 		ChosenArm:  chosenArm,

@@ -3,7 +3,7 @@ package strategy
 import (
 	"math/rand"
 
-	"github.com/leoffx/bandit-algorithms/lib/bandit"
+	"github.com/leoffx/bandit-algorithms/lib/arm"
 	"github.com/leoffx/bandit-algorithms/lib/database"
 )
 
@@ -17,7 +17,7 @@ func NewEpsilonGreedy(epsilon float64) *EpsilonGreedy {
 	}
 }
 
-func (e *EpsilonGreedy) ScoreArms(arms []*bandit.Arm, armToStats *database.ArmToStats) *database.ArmToScore {
+func (e *EpsilonGreedy) ScoreArms(arms []arm.Arm, armToStats *database.ArmToStats) *database.ArmToScore {
 	armToScore := make(database.ArmToScore)
 	// Explore
 	if rand.Float64() < e.epsilon || len(*armToStats) == 0 {
@@ -38,8 +38,8 @@ func (e *EpsilonGreedy) ScoreArms(arms []*bandit.Arm, armToStats *database.ArmTo
 	return &armToScore
 }
 
-func (e *EpsilonGreedy) ChooseArm(armToScore *database.ArmToScore) *bandit.Arm {
-	ks := make([]*bandit.Arm, 0, len(*armToScore))
+func (e *EpsilonGreedy) ChooseArm(armToScore *database.ArmToScore) arm.Arm {
+	ks := make([]arm.Arm, 0, len(*armToScore))
 	vs := make([]float64, 0, len(*armToScore))
 	for k, v := range *armToScore {
 		ks = append(ks, k)
@@ -49,11 +49,11 @@ func (e *EpsilonGreedy) ChooseArm(armToScore *database.ArmToScore) *bandit.Arm {
 	if err != nil {
 		panic(err)
 	}
-	return arm
+	return *arm
 }
 
-func (e *EpsilonGreedy) chooseBestArm(armToStats *database.ArmToStats) *bandit.Arm {
-	var bestArm *bandit.Arm
+func (e *EpsilonGreedy) chooseBestArm(armToStats *database.ArmToStats) arm.Arm {
+	var bestArm arm.Arm
 	var bestAvgReward float64
 	for arm, stats := range *armToStats {
 		if bestArm == nil || stats.AvgRewardWhenUsed > bestAvgReward {
