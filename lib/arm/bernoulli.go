@@ -27,3 +27,7 @@ func (a BernouliArm) String() string {
 	return fmt.Sprintf("BernouliArm{probability: %f}", a.probability)
 
 }
+
+func (a BernouliArm) Mean() float64 {
+	return a.probability
+}

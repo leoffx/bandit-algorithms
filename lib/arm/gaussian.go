@@ -24,3 +24,7 @@ func (a GaussianArm) Pull() float64 {
 func (a GaussianArm) String() string {
 	return fmt.Sprintf("GaussianArm{mean: %f, stdDev: %f}", a.mean, a.stdDev)
 }
+
+func (a GaussianArm) Mean() float64 {
+	return a.mean
+}

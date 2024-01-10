@@ -1,6 +1,7 @@
 package arm
 
 type Arm interface {
+	Mean() float64
 	Pull() float64
 	String() string
 }
