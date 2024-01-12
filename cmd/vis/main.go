@@ -4,6 +4,7 @@ import (
 	"github.com/leoffx/bandit-algorithms/lib/arm"
 	"github.com/leoffx/bandit-algorithms/lib/bandit"
 	"github.com/leoffx/bandit-algorithms/lib/database"
+	"github.com/leoffx/bandit-algorithms/lib/simulation"
 	"github.com/leoffx/bandit-algorithms/lib/strategy"
 
 	"gonum.org/v1/plot"
@@ -15,21 +16,9 @@ const numRounds = 1000
 const numArms = 3
 
 func main() {
-	bandit := bandit.NewBandit(numArms)
-	db := database.NewDatabaseAggregator()
-
-	strategy := strategy.NewEpsilonGreedy(0.1)
-
-	for i := 0; i < numRounds; i++ {
-		eligibleArms := bandit.GetEligibleArms()
-		armToStats := db.ArmToStats()
-		armToScore := strategy.ScoreArms(eligibleArms, &armToStats)
-		chosenArm := strategy.ChooseArm(armToScore)
-
-		reward := bandit.PullArm(chosenArm)
-		db.AddEntry(database.NewEntry(i, chosenArm, armToScore, reward))
-	}
-
+	strategy := strategy.NewEpsilonGreedy(0.3)
+	// strategy := strategy.NewRecoveringDifferenceSoftmax(0.3,)
+	bandit, db := simulation.Run(numArms, numRounds, strategy)
 	createPlot(bandit, db)
 
 }

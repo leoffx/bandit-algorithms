@@ -11,5 +11,6 @@ const (
 )
 
 type Strategy interface {
-	ChooseArm([]*arm.Arm, *database.ArmToStats) *arm.Arm
+	ChooseArm(*database.ArmToScore) arm.Arm
+	ScoreArms([]arm.Arm, *database.ArmToStats) *database.ArmToScore
 }

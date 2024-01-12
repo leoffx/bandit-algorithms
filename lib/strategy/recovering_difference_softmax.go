@@ -32,7 +32,7 @@ func (r *RecoveringDifferenceSoftmax) CalculateArmsProbabilities(arms []*arm.Arm
 	return armToProbability
 }
 
-func (r *RecoveringDifferenceSoftmax) ChooseArm(arms []*arm.Arm, entries []*database.Entry) *arm.Arm {
+func (r *RecoveringDifferenceSoftmax) ChooseArm(arms []arm.Arm, armToProbability map[*arm.Arm]float64) arm.Arm {
 	// arms := make([]*arm.Arm, 0, len(armToProbability))
 	// probabilities := make([]float64, 0, len(armToProbability))
 	// for arm, probability := range armToProbability {
