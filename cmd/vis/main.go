@@ -12,15 +12,14 @@ import (
 	"gonum.org/v1/plot/plotutil"
 )
 
-const numRounds = 1000
-const numArms = 3
+const numRounds = 10000
+const numArms = 10
 
 func main() {
-	strategy := strategy.NewEpsilonGreedy(0.3)
+	strategy := strategy.NewEpsilonGreedy(0.01)
 	// strategy := strategy.NewRecoveringDifferenceSoftmax(0.3,)
 	bandit, db := simulation.Run(numArms, numRounds, strategy)
 	createPlot(bandit, db)
-
 }
 
 func createPlot(bandit *bandit.Bandit, db *database.DatabaseAggregator) {
@@ -29,6 +28,8 @@ func createPlot(bandit *bandit.Bandit, db *database.DatabaseAggregator) {
 	p.Title.Text = "Average Reward over Time"
 	p.X.Label.Text = "Round"
 	p.Y.Label.Text = "Average Reward"
+	p.Y.Min = 0
+	p.Y.Max = 1.3
 
 	var bestArm arm.Arm
 	for _, arm := range bandit.Arms {

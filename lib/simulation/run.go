@@ -15,14 +15,14 @@ func Run(numArms int, numRounds int, strategy strategy.Strategy) (*bandit.Bandit
 	for i := 0; i < numRounds; i++ {
 		eligibleArms := bandit.GetEligibleArms()
 		armToStats := db.ArmToStats()
-		armToScore := strategy.ScoreArms(eligibleArms, &armToStats)
+		armToScore := strategy.ScoreArms(eligibleArms, armToStats)
 		chosenArm := strategy.ChooseArm(armToScore)
 
 		reward := bandit.PullArm(chosenArm)
 		db.AddEntry(database.NewEntry(i, chosenArm, armToScore, reward))
 	}
 
-	fmt.Println("Database:\n", db)
+	// fmt.Println("Database:\n", db)
 	fmt.Println("Bandit:\n", bandit)
 	return bandit, db
 }
