@@ -12,35 +12,35 @@ func Softmax(logits []float64, temperature float64) []float64 {
 		expSum += math.Exp(logit / temperature)
 	}
 
-	probabilities := make([]float64, len(logits))
+	probs := make([]float64, len(logits))
 	for i, logit := range logits {
-		probabilities[i] = math.Exp(logit/temperature) / expSum
+		probs[i] = math.Exp(logit/temperature) / expSum
 	}
 
-	return probabilities
+	return probs
 }
 
-func RandomChoice[T any](items []T, probabilities *[]float64) (*T, error) {
+func RandomChoice[T any](items []T, probs []float64) (*T, error) {
 	if len(items) == 0 {
 		return nil, errors.New("no items to choose from")
 	}
-	if probabilities == nil || len(*probabilities) == 0 {
+	if len(probs) == 0 {
 		return &items[rand.Intn(len(items))], nil
 	}
-	if len(*probabilities) != len(items) {
-		return nil, errors.New("probabilities must be the same length as items")
+	if len(probs) != len(items) {
+		return nil, errors.New("probs must be the same length as items")
 	}
-	probabilitiesSum := 0.0
-	for _, probability := range *probabilities {
-		probabilitiesSum += probability
+	probsSum := 0.0
+	for _, prob := range probs {
+		probsSum += prob
 	}
-	if math.Abs(probabilitiesSum-1) > 1e-6 {
-		return nil, errors.New("probabilities must sum to 1")
+	if math.Abs(probsSum-1) > 1e-6 {
+		return nil, errors.New("probs must sum to 1")
 	}
 
 	r := rand.Float64()
-	for i, probability := range *probabilities {
-		r -= probability
+	for i, prob := range probs {
+		r -= prob
 		if r <= 0 {
 			return &items[i], nil
 		}

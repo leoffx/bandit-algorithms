@@ -23,9 +23,9 @@ func TestArmToStats(t *testing.T) {
 	db.AddEntry(database.NewEntry(4, arm1, &database.ArmToScore{arm0: 0.25, arm1: 0.5, arm2: 0.25}, 1))
 
 	armToStats := db.ArmToStats()
-	arm0Stats := armToStats[arm0]
-	arm1Stats := armToStats[arm1]
-	arm2Stats := armToStats[arm2]
+	arm0Stats := (*armToStats)[arm0]
+	arm1Stats := (*armToStats)[arm1]
+	arm2Stats := (*armToStats)[arm2]
 	// AvgRewardWhenUsed
 	if arm0Stats.AvgRewardWhenUsed != 0.25 {
 		t.Error("arm0Stats.AvgRewardWhenUsed != 0.25")
@@ -36,15 +36,15 @@ func TestArmToStats(t *testing.T) {
 	if arm2Stats.AvgRewardWhenUsed != 0 {
 		t.Error("arm2Stats.AvgRewardWhenUsed != 0")
 	}
-	// AvgRewardWhenElligible
-	if arm0Stats.AvgRewardWhenElligible != 29./48. {
-		t.Error("arm0Stats.AvgRewardWhenElligible != 29./48.")
+	// AvgRewardWhenEligible
+	if arm0Stats.AvgRewardWhenEligible != 29./48. {
+		t.Error("arm0Stats.AvgRewardWhenEligible != 29./48.")
 	}
-	if math.Abs(arm1Stats.AvgRewardWhenElligible-26./37.) > 1e-6 {
-		t.Error("arm1Stats.AvgRewardWhenElligible != 26./37.")
+	if math.Abs(arm1Stats.AvgRewardWhenEligible-26./37.) > 1e-6 {
+		t.Error("arm1Stats.AvgRewardWhenEligible != 26./37.")
 	}
-	if arm2Stats.AvgRewardWhenElligible != 1 {
-		t.Error("arm2Stats.AvgRewardWhenElligible != 1")
+	if arm2Stats.AvgRewardWhenEligible != 1 {
+		t.Error("arm2Stats.AvgRewardWhenEligible != 1")
 	}
 	fmt.Println(armToStats)
 }

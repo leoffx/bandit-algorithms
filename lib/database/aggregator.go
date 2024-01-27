@@ -11,10 +11,10 @@ type DatabaseAggregator struct {
 }
 
 type ArmStats struct {
-	count                  int
-	AvgRewardWhenUsed      float64
-	AvgRewardWhenElligible float64
-	sumScoresWhenElligible float64
+	count                 int
+	AvgRewardWhenUsed     float64
+	AvgRewardWhenEligible float64
+	sumScoresWhenEligible float64
 }
 
 type ArmToStats map[arm.Arm]*ArmStats
@@ -64,8 +64,8 @@ func updateAllArms(armToStats ArmToStats, entry *Entry) {
 		}
 
 		// sum (score * reward) / sum (score)
-		dividend := curr.sumScoresWhenElligible + score
-		curr.AvgRewardWhenElligible = (curr.AvgRewardWhenElligible * curr.sumScoresWhenElligible / dividend) + (score * entry.Reward / dividend)
-		curr.sumScoresWhenElligible += score
+		dividend := curr.sumScoresWhenEligible + score
+		curr.AvgRewardWhenEligible = (curr.AvgRewardWhenEligible * curr.sumScoresWhenEligible / dividend) + (score * entry.Reward / dividend)
+		curr.sumScoresWhenEligible += score
 	}
 }

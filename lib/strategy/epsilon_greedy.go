@@ -41,11 +41,13 @@ func (e *EpsilonGreedy) ScoreArms(arms []arm.Arm, armToStats *database.ArmToStat
 func (e *EpsilonGreedy) ChooseArm(armToScore *database.ArmToScore) arm.Arm {
 	ks := make([]arm.Arm, 0, len(*armToScore))
 	vs := make([]float64, 0, len(*armToScore))
+	i := 0
 	for k, v := range *armToScore {
-		ks = append(ks, k)
-		vs = append(vs, v)
+		ks[i] = k
+		vs[i] = v
+		i++
 	}
-	arm, err := RandomChoice(ks, &vs)
+	arm, err := RandomChoice(ks, vs)
 	if err != nil {
 		panic(err)
 	}

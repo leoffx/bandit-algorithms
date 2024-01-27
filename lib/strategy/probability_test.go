@@ -71,7 +71,7 @@ func TestRandomChoices(t *testing.T) {
 		},
 	}
 	for i, tt := range tests {
-		got, _ := strategy.RandomChoice(tt.arms, &tt.probabilities)
+		got, _ := strategy.RandomChoice(tt.arms, tt.probabilities)
 		if !reflect.DeepEqual(*got, tt.expected) {
 			t.Errorf("TestRandomChoices(%d): got %v, want %v", i, got, tt.expected)
 		}

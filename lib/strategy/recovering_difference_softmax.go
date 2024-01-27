@@ -8,51 +8,49 @@ import (
 )
 
 type RecoveringDifferenceSoftmax struct {
-	history     *database.Database
 	temperature float64
 }
 
-func NewRecoveringDifferenceSoftmax(history *database.Database, temperature float64) (*RecoveringDifferenceSoftmax, error) {
+func NewRecoveringDifferenceSoftmax(temperature float64) *RecoveringDifferenceSoftmax {
 	if temperature <= 0 {
-		return nil, errors.New("temperature must be positive")
+		panic(errors.New("temperature must be positive"))
 	}
 	return &RecoveringDifferenceSoftmax{
-		history:     history,
 		temperature: temperature,
-	}, nil
-}
-
-func (r *RecoveringDifferenceSoftmax) CalculateArmsProbabilities(arms []*arm.Arm) map[*arm.Arm]float64 {
-	scores := r.calculateScores(arms)
-	probabilities := Softmax(scores, r.temperature)
-	armToProbability := make(map[*arm.Arm]float64)
-	for i, arm := range arms {
-		armToProbability[arm] = probabilities[i]
 	}
-	return armToProbability
 }
 
-func (r *RecoveringDifferenceSoftmax) ChooseArm(arms []arm.Arm, armToProbability map[*arm.Arm]float64) arm.Arm {
-	// arms := make([]*arm.Arm, 0, len(armToProbability))
-	// probabilities := make([]float64, 0, len(armToProbability))
-	// for arm, probability := range armToProbability {
-	// 	arms = append(arms, arm)
-	// 	probabilities = append(probabilities, probability)
-	// }
-	// return randomChoices(arms, probabilities)
-	return nil
+func (r *RecoveringDifferenceSoftmax) ChooseArm(armToScore *database.ArmToScore) arm.Arm {
+	ks := make([]arm.Arm, len(*armToScore))
+	vs := make([]float64, len(*armToScore))
+	i := 0
+	for k, v := range *armToScore {
+		ks[i] = k
+		vs[i] = v
+		i++
+	}
+	arm, err := RandomChoice(ks, vs)
+	if err != nil {
+		panic(err)
+	}
+	return *arm
 }
 
-func (r *RecoveringDifferenceSoftmax) calculateScores(arms []*arm.Arm) []float64 {
-	// scores := make([]float64, len(arms))
-	// for i, arm := range arms {
-	// 	armStats := r.history.ArmToStats[arm]
-	// 	if armStats.Count == 0 {
-	// 		scores[i] = 0
-	// 		continue
-	// 	}
-	// 	scores[i] = (armStats.AvgRewardWhenUsed - armStats.AvgRewardWhenEligible) / armStats.AvgRewardWhenEligible
-	// }
-	// return scores
-	return nil
+func (r *RecoveringDifferenceSoftmax) ScoreArms(arms []arm.Arm, armToStats *database.ArmToStats) *database.ArmToScore {
+	logits := make([]float64, len(arms))
+	for i, arm := range arms {
+		armStats := (*armToStats)[arm]
+		if armStats == nil {
+			logits[i] = 1 / float64(len(arms))
+			continue
+		}
+		logits[i] = (armStats.AvgRewardWhenUsed - armStats.AvgRewardWhenEligible) / armStats.AvgRewardWhenEligible
+	}
+
+	probabilities := Softmax(logits, r.temperature)
+	armToScore := make(database.ArmToScore)
+	for i, arm := range arms {
+		armToScore[arm] = probabilities[i]
+	}
+	return &armToScore
 }

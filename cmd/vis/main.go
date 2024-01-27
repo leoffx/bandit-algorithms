@@ -16,8 +16,8 @@ const numRounds = 10000
 const numArms = 10
 
 func main() {
-	strategy := strategy.NewEpsilonGreedy(0.01)
-	// strategy := strategy.NewRecoveringDifferenceSoftmax(0.3,)
+	// strategy := strategy.NewEpsilonGreedy(0.01)
+	strategy := strategy.NewRecoveringDifferenceSoftmax(0.3)
 	bandit, db := simulation.Run(numArms, numRounds, strategy)
 	createPlot(bandit, db)
 }
